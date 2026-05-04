@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Content Scraper</title>
+    <style>
+        body { max-width: 900px; margin: 30px auto; font-family: Arial; padding: 0 20px; }
+        .box { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        .file-list { margin-top: 30px; }
+        .file-item { padding: 10px; border-bottom: 1px solid #eee; }
+        .file-item a { color: #007bff; text-decoration: none; }
+        .time { color: #666; font-size: 12px; margin-left: 10px; }
+    </style>
+</head>
+<body>
+<h1>Web Content Scraper</h1>
+<div class="box">
+    <form id="scrapeForm">
+        <input type="text" name="filename" placeholder="Save as (e.g. book.txt)" required>
+        <input type="url" name="url" placeholder="Target URL" required>
+        <input type="text" name="title_sel" value=".title" placeholder="Title CSS Selector" required>
+        <input type="text" name="content_sel" value="article, .article, .content" placeholder="Content CSS Selector" required>
+        <button type="submit">Start Scraping</button>
+    </form>
+    <div id="result" style="margin-top:15px; font-weight:bold;"></div>
+</div>
+<div class="file-list">
+    <h2>Download Files (Newest First)</h2>
+    {% for file in files %}
+    <div class="file-item">
+        <a href="/download/{{ file.name }}">{{ file.name }}</a>
+        <span class="time">{{ file.time_str }}</span>
+    </div>
+    {% else %}
+    <p>No files yet.</p>
+    {% endfor %}
+</div>
+<script>
+    const form = document.getElementById('scrapeForm');
+    const result = document.getElementById('result');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        result.textContent = 'Scraping... please wait...';
+        result.style.color = '#333';
+        const res = await fetch('/start', {
+            method: 'POST',
+            body: new FormData(form)
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+            result.textContent = data.msg;
+            result.style.color = 'green';
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            result.textContent = 'Error: ' + data.msg;
+            result.style.color = 'red';
+        }
+    });
+</script>
+</body>
+</html>
