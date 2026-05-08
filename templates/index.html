@@ -30,7 +30,7 @@
     <h2>Download Files (Newest First)</h2>
     {% for file in files %}
     <div class="file-item">
-        <a href="/download/{{ file.name }}">{{ file.name }}</a>
+        <a href="/txt-downloader/download/{{ file.name }}">{{ file.name }}</a>
         <span class="time">{{ file.time_str }}</span>
     </div>
     {% else %}
@@ -44,17 +44,37 @@
         e.preventDefault();
         result.textContent = 'Scraping... please wait...';
         result.style.color = '#333';
-        const res = await fetch('/start', {
-            method: 'POST',
-            body: new FormData(form)
-        });
-        const data = await res.json();
-        if (data.status === 'success') {
-            result.textContent = data.msg;
-            result.style.color = 'green';
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            result.textContent = 'Error: ' + data.msg;
+
+        try {
+            const res = await fetch('/txt-downloader/start', {
+                method: 'POST',
+                body: new FormData(form)
+            });
+
+            console.log('Response status:', res.status);
+            console.log('Response headers:', res.headers);
+
+            const contentType = res.headers.get('content-type');
+            console.log('Content-Type:', contentType);
+
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('Response is not JSON. Content-Type: ' + contentType);
+            }
+
+            const data = await res.json();
+            console.log('Response data:', data);
+
+            if (data.status === 'success') {
+                result.textContent = data.msg;
+                result.style.color = 'green';
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                result.textContent = 'Error: ' + data.msg;
+                result.style.color = 'red';
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            result.textContent = 'Error: ' + error.message;
             result.style.color = 'red';
         }
     });

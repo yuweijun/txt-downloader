@@ -8,3 +8,7 @@ __pycache__/
 .idea/
 .vscode/
 *.txt
+logs/
+.pm2/
+*.log
+*.log.*
