@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import os
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,49 @@ def get_page_content(url):
     return None
 
 def parse_title(soup, title_selector):
-    elements = soup.select(title_selector)
-    return elements[0].get_text(strip=True) if elements else "No Title"
+  elements = soup.select(title_selector)
+  return elements[0].get_text(strip=True) if elements else "No Title"
+
+def sanitize_filename(title):
+  """Generate a safe filename from title, keeping only first 50 characters"""
+  if not title or title == "No Title":
+    return "untitled"
+
+  # Remove or replace invalid filename characters
+  # Keep alphanumeric, spaces, hyphens, underscores, and CJK characters
+  sanitized = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', title)
+
+  # Replace multiple spaces with single space
+  sanitized = re.sub(r'\s+', ' ', sanitized).strip()
+
+  # Take first 50 characters to avoid overly long filenames
+  sanitized = sanitized[:50].strip()
+
+  # If empty after sanitization, use default
+  if not sanitized:
+    return "untitled"
+
+  return sanitized
+
+def get_title_from_url(url):
+  """Fetch page and extract HTML title tag for filename generation"""
+  try:
+    logger.info(f'Fetching HTML title from URL: {url}')
+    soup = get_page_content(url)
+    if soup:
+      # Get title from HTML <title> tag
+      title_tag = soup.find('title')
+      if title_tag:
+        title = title_tag.get_text(strip=True)
+        logger.info(f'Extracted HTML title: {title}')
+        return title
+      else:
+        logger.warning('No <title> tag found in HTML')
+        return None
+    return None
+  except Exception as e:
+    logger.error(f'Failed to get title from URL: {url}, Error: {str(e)}')
+    return None
 
 def parse_content(soup, content_selector):
     elements = soup.select(content_selector)

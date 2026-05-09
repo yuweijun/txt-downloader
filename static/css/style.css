@@ -180,6 +180,7 @@ input::placeholder {
 .file-info {
   flex: 1;
   min-width: 0;
+  max-width: 160px;
 }
 
 .file-name {
@@ -192,6 +193,7 @@ input::placeholder {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: 4px;
+  max-width: 160px;
 }
 
 .file-name:hover {

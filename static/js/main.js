@@ -21,6 +21,16 @@ const result = document.getElementById('result');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.textContent;
+
+  // Disable button to prevent double submission
+  submitBtn.disabled = true;
+  submitBtn.textContent = '⏳ Scraping...';
+  submitBtn.style.opacity = '0.6';
+  submitBtn.style.cursor = 'not-allowed';
+
   result.className = 'loading show';
   result.textContent = '⏳ Scraping... please wait...';
 
@@ -60,11 +70,23 @@ form.addEventListener('submit', async (e) => {
     } else {
       result.className = 'error show';
       result.textContent = '❌ Error: ' + data.msg;
+
+      // Re-enable button on error
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
+      submitBtn.style.opacity = '1';
+      submitBtn.style.cursor = 'pointer';
     }
   } catch (error) {
     console.error('Fetch error:', error);
     result.className = 'error show';
     result.textContent = '❌ Error: ' + error.message;
+
+    // Re-enable button on error
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalBtnText;
+    submitBtn.style.opacity = '1';
+    submitBtn.style.cursor = 'pointer';
   }
 });
 

@@ -18,23 +18,23 @@
     <div class="form-section">
       <form id="scrapeForm">
         <div class="form-group">
-          <label for="filename">📝 Filename</label>
-          <input type="text" id="filename" name="filename" placeholder="my-book.txt" value="{{ form.filename }}" required>
-        </div>
-
-        <div class="form-group">
           <label for="url">🔗 Target URL</label>
           <input type="url" id="url" name="url" placeholder="https://example.com/page" value="{{ form.url }}" required>
         </div>
 
         <div class="form-group">
-          <label for="title_sel">🎯 Title Selector</label>
-          <input type="text" id="title_sel" name="title_sel" placeholder="h1, .title, #chaptertitle" value="{{ form.title_sel }}" required>
+          <label for="filename">📝 Filename <span style="color: #888; font-size: 0.9em;">(optional, auto-generated from title)</span></label>
+          <input type="text" id="filename" name="filename" placeholder="Auto-generated from document title" value="{{ form.filename }}">
         </div>
 
         <div class="form-group">
-          <label for="content_sel">📄 Content Selector</label>
-          <input type="text" id="content_sel" name="content_sel" placeholder="article, .content, #novelcontent" value="{{ form.content_sel }}" required>
+          <label for="title_sel">🎯 Title Selector <span style="color: #888; font-size: 0.9em;">(optional)</span></label>
+          <input type="text" id="title_sel" name="title_sel" placeholder="#title, .title, [class*='title'], [id*='title']" value="{{ form.title_sel }}">
+        </div>
+
+        <div class="form-group">
+          <label for="content_sel">📄 Content Selector <span style="color: #888; font-size: 0.9em;">(optional)</span></label>
+          <input type="text" id="content_sel" name="content_sel" placeholder="article, .article, .content, #article, #content, [class*='content'], [id*='content'], [class*='article'], [id*='article']" value="{{ form.content_sel }}">
         </div>
 
         <button type="submit" class="submit-btn">🚀 Start Scraping</button>

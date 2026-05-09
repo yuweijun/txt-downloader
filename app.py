@@ -100,8 +100,8 @@ def index():
   form_values = {
     'filename': request.args.get('filename', ''),
     'url': request.args.get('url', ''),
-    'title_sel': request.args.get('title_sel', '.title'),
-    'content_sel': request.args.get('content_sel', 'article, .article, .content')
+    'title_sel': request.args.get('title_sel', ''),
+    'content_sel': request.args.get('content_sel', '')
   }
   app.logger.info(f'Form values: {form_values}')
 
@@ -114,22 +114,34 @@ def static_files(filename):
 @app.route('/txt-downloader/start', methods=['POST'])
 def start():
   url = request.form.get('url')
-  title_sel = request.form.get('title_sel')
-  content_sel = request.form.get('content_sel')
-  filename = request.form.get('filename', 'result.txt')
+  title_sel = request.form.get('title_sel') or "#title, .title, [class*='title'], [id*='title']"
+  content_sel = request.form.get('content_sel') or "article, .article, .content, #article, #content, [class*='content'], [id*='content'], [class*='article'], [id*='article']"
+  filename = request.form.get('filename', '').strip()
 
   app.logger.info(f'Start scraping request - URL: {url}, Filename: {filename}')
+  app.logger.info(f'Selectors - Title: {title_sel}, Content: {content_sel}')
 
-  if not filename.endswith('.txt'):
-    filename += '.txt'
-
-  if not all([url, title_sel, content_sel]):
-    app.logger.warning('Missing required fields in scraping request')
-    response = jsonify({"status": "error", "msg": "All fields are required!"})
+  if not url:
+    app.logger.warning('Missing required URL in scraping request')
+    response = jsonify({"status": "error", "msg": "URL is required!"})
     response.headers['Content-Type'] = 'application/json'
     return response, 400
 
   try:
+    # If no filename provided, generate from HTML page title
+    if not filename:
+      app.logger.info('No filename provided, generating from HTML page title')
+      title = scraper.get_title_from_url(url)
+      if title:
+        filename = scraper.sanitize_filename(title)
+        app.logger.info(f'Generated filename from HTML title: {filename}')
+      else:
+        filename = 'result'
+        app.logger.warning('Failed to get HTML title, using default filename: result')
+
+    if not filename.endswith('.txt'):
+      filename += '.txt'
+
     app.logger.info(f'Starting scraper for {url}')
     scraper.run_spider(url, title_sel, content_sel, filename)
     app.logger.info(f'Scraping completed successfully - File: {filename}')
