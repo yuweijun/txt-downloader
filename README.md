@@ -41,6 +41,109 @@ pm2 start ecosystem.config.js
 - **Development**: http://localhost:9000
 - **Production** (with Nginx): http://localhost:8080/txt-downloader/
 
+## Nginx Configuration (Optional)
+
+If you want to deploy with Nginx reverse proxy, configure Nginx as follows:
+
+### For macOS (Homebrew Nginx)
+
+Edit `/opt/homebrew/etc/nginx/nginx.conf`:
+
+```nginx
+http {
+  server {
+    listen 8080;
+    server_name localhost;
+
+    # Your other location blocks...
+
+    # Proxy /txt-downloader/ to Flask app
+    location /txt-downloader/ {
+      proxy_pass http://127.0.0.1:9000/txt-downloader/;
+      proxy_http_version 1.1;
+      
+      # Forward headers
+      proxy_set_header Host $host;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Connection "";
+      
+      # Disable buffering for better streaming
+      proxy_buffering off;
+      proxy_request_buffering off;
+      
+      # Timeouts for long scraping tasks
+      proxy_read_timeout 300s;
+      proxy_connect_timeout 75s;
+      
+      # Pass through headers
+      proxy_pass_request_headers on;
+      proxy_set_header Accept-Encoding "";
+    }
+  }
+}
+```
+
+**Important**: 
+- Use `location /txt-downloader/` (with trailing slash)
+- Use `proxy_pass http://127.0.0.1:9000/txt-downloader/;` (with trailing slash)
+- Do NOT use regex patterns like `location ~ ^/txt-downloader(.*)$`
+- This ensures Flask receives the full path including `/txt-downloader` prefix
+
+### For Linux (System Nginx)
+
+Create `/etc/nginx/sites-available/txt-downloader`:
+
+```nginx
+server {
+  listen 80;
+  server_name yourdomain.com;
+
+  location /txt-downloader/ {
+    proxy_pass http://127.0.0.1:9000/txt-downloader/;
+    proxy_http_version 1.1;
+    
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Connection "";
+    
+    proxy_buffering off;
+    proxy_request_buffering off;
+    proxy_read_timeout 300s;
+    proxy_connect_timeout 75s;
+    
+    proxy_pass_request_headers on;
+    proxy_set_header Accept-Encoding "";
+  }
+}
+```
+
+Enable and reload:
+
+```bash
+# Create symbolic link
+sudo ln -s /etc/nginx/sites-available/txt-downloader /etc/nginx/sites-enabled/
+
+# Test configuration
+sudo nginx -t
+
+# Reload nginx
+sudo systemctl reload nginx
+```
+
+### Reload Nginx After Configuration Changes
+
+```bash
+# Test configuration first
+nginx -t
+
+# Reload if test passes
+nginx -s reload
+```
+
 ## How to Use
 
 1. **Fill in the form**:

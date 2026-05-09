@@ -76,7 +76,6 @@ if not app.logger.handlers:
 
   app.logger.info('Flask application started')
 
-@app.route('/')
 @app.route('/txt-downloader/')
 def index():
   app.logger.info('Index page accessed')
@@ -108,7 +107,11 @@ def index():
 
   return render_template('index.html', files=files, form=form_values)
 
-@app.route('/start', methods=['POST'])
+@app.route('/txt-downloader/static/<path:filename>')
+def static_files(filename):
+  return send_from_directory('static', filename)
+
+@app.route('/txt-downloader/start', methods=['POST'])
 def start():
   url = request.form.get('url')
   title_sel = request.form.get('title_sel')
@@ -142,7 +145,7 @@ def start():
     response.headers['Content-Type'] = 'application/json'
     return response, 500
 
-@app.route('/download/<path:filename>')
+@app.route('/txt-downloader/download/<path:filename>')
 def download_file(filename):
   app.logger.info(f'File download request - Filename: {filename}')
 
@@ -186,7 +189,7 @@ def download_file(filename):
     app.logger.error(f'Download failed - Filename: {filename}, Error: {str(e)}', exc_info=True)
     return jsonify({"status": "error", "msg": str(e)}), 500
 
-@app.route('/delete/<path:filename>', methods=['DELETE'])
+@app.route('/txt-downloader/delete/<path:filename>', methods=['DELETE'])
 def delete_file(filename):
   app.logger.info(f'File delete request - Filename: {filename}')
   try:

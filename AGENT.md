@@ -158,27 +158,28 @@ See `PM2_COMMANDS.md` for more PM2 commands.
 
 ## Nginx Reverse Proxy Configuration
 
+**IMPORTANT**: Flask app runs with `/txt-downloader` prefix in all routes. Nginx must pass the full path including the prefix to Flask.
+
 ### For macOS (Homebrew Nginx)
 
 Edit `/opt/homebrew/etc/nginx/nginx.conf`:
 
 ```nginx
 http {
-  # ... other http config ...
-
   server {
-    listen       8080;
-    server_name  localhost;
+    listen 8080;
+    server_name localhost;
 
     # Serve static files from nginx html directory
     location / {
-      root   html;
-      index  index.html index.htm;
+      root html;
+      index index.html index.htm;
     }
 
-    # Proxy /txt-downloader/* to Flask app on port 9000
-    location ~ ^/txt-downloader(.*)$ {
-      proxy_pass   http://127.0.0.1:9000$1;
+    # Proxy /txt-downloader/ to Flask app
+    # IMPORTANT: Use trailing slashes on both location and proxy_pass
+    location /txt-downloader/ {
+      proxy_pass http://127.0.0.1:9000/txt-downloader/;
       proxy_http_version 1.1;
       
       # Forward original request headers
@@ -201,12 +202,24 @@ http {
       proxy_set_header Accept-Encoding "";
     }
 
-    error_page   500 502 503 504  /50x.html;
+    error_page 500 502 503 504 /50x.html;
     location = /50x.html {
-      root   html;
+      root html;
     }
   }
 }
+```
+
+**Key Points**:
+- ✅ Use `location /txt-downloader/` (with trailing slash)
+- ✅ Use `proxy_pass http://127.0.0.1:9000/txt-downloader/;` (with trailing slash and full path)
+- ❌ Do NOT use regex: `location ~ ^/txt-downloader(.*)$` with `proxy_pass http://127.0.0.1:9000$1;`
+- ❌ Do NOT strip the prefix - Flask needs the full path
+
+This configuration ensures:
+1. Browser requests: `http://localhost:8080/txt-downloader/static/css/style.css`
+2. Nginx forwards to: `http://127.0.0.1:9000/txt-downloader/static/css/style.css`
+3. Flask handles at: `/txt-downloader/static/css/style.css`
 ```
 
 ### For Linux (System Nginx)
@@ -216,10 +229,10 @@ Create `/etc/nginx/sites-available/txt-downloader`:
 ```nginx
 server {
   listen 80;
-  server_name yourdomain.com;  # Replace with your domain
+  server_name yourdomain.com;
 
-  location /txt-downloader {
-    proxy_pass http://127.0.0.1:9000;
+  location /txt-downloader/ {
+    proxy_pass http://127.0.0.1:9000/txt-downloader/;
     proxy_http_version 1.1;
     
     proxy_set_header Host $host;

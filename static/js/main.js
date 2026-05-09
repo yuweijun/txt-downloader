@@ -69,10 +69,6 @@ form.addEventListener('submit', async (e) => {
 });
 
 async function deleteFile(encodedFilename, displayName) {
-  if (!confirm(`Are you sure you want to delete "${displayName}"?`)) {
-    return;
-  }
-
   try {
     const res = await fetch(`/txt-downloader/delete/${encodedFilename}`, {
       method: 'DELETE'
@@ -81,13 +77,11 @@ async function deleteFile(encodedFilename, displayName) {
     const data = await res.json();
 
     if (data.status === 'success') {
-      alert(data.msg);
       location.reload();
     } else {
-      alert('Error: ' + data.msg);
+      console.error('Delete error:', data.msg);
     }
   } catch (error) {
     console.error('Delete error:', error);
-    alert('Error: ' + error.message);
   }
 }
