@@ -2,31 +2,77 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Content Scraper</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Scraper</title>
   <link rel="stylesheet" href="/txt-downloader/static/css/style.css">
 </head>
 <body>
-<div class="box">
-  <form id="scrapeForm">
-    <input type="text" name="filename" placeholder="Save as (e.g. book.txt)" value="{{ form.filename }}" required>
-    <input type="url" name="url" placeholder="Target URL" value="{{ form.url }}" required>
-    <input type="text" name="title_sel" value="{{ form.title_sel }}" placeholder="Title CSS Selector" required>
-    <input type="text" name="content_sel" value="{{ form.content_sel }}" placeholder="Content CSS Selector" required>
-    <button type="submit">Start Scraping</button>
-  </form>
-  <div id="result" style="margin-top:15px; font-weight:bold;"></div>
-</div>
-<div class="box">
-  {% for file in files %}
-  <div class="file-item">
-    <a href="/txt-downloader/download/{{ file.name | urlencode }}">{{ file.name }}</a>
-    <span class="time">{{ file.time_str }}</span>
-    <button class="delete-btn" style="width: 60px;" onclick="deleteFile('{{ file.name | urlencode }}', '{{ file.name }}')">Delete</button>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>🌐 Web Content Scraper</h1>
+      <p>Extract and download web content with smart pagination</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-section">
+      <form id="scrapeForm">
+        <div class="form-group">
+          <label for="filename">📝 Filename</label>
+          <input type="text" id="filename" name="filename" placeholder="my-book.txt" value="{{ form.filename }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="url">🔗 Target URL</label>
+          <input type="url" id="url" name="url" placeholder="https://example.com/page" value="{{ form.url }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="title_sel">🎯 Title Selector</label>
+          <input type="text" id="title_sel" name="title_sel" placeholder="h1, .title, #chaptertitle" value="{{ form.title_sel }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="content_sel">📄 Content Selector</label>
+          <input type="text" id="content_sel" name="content_sel" placeholder="article, .content, #novelcontent" value="{{ form.content_sel }}" required>
+        </div>
+
+        <button type="submit" class="submit-btn">🚀 Start Scraping</button>
+      </form>
+
+      <div id="result"></div>
+    </div>
+
+    <!-- Files Section -->
+    <div class="files-section">
+      <div class="files-header">
+        <h2>📁 Downloaded Files</h2>
+        <span class="files-count">{{ files|length }} files</span>
+      </div>
+
+      <div class="file-list">
+        {% if files %}
+          {% for file in files %}
+          <div class="file-item">
+            <div class="file-info">
+              <a href="/txt-downloader/download/{{ file.name | urlencode }}" class="file-name" title="{{ file.name }}">{{ file.name }}</a>
+              <div class="file-time">{{ file.time_str }}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteFile('{{ file.name | urlencode }}', '{{ file.name }}')">Delete</button>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-state">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p>No files yet. Start scraping to see your downloads here!</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
   </div>
-  {% else %}
-  <p>No files yet.</p>
-  {% endfor %}
-</div>
-<script src="/txt-downloader/static/js/main.js"></script>
+
+  <script src="/txt-downloader/static/js/main.js"></script>
 </body>
 </html>

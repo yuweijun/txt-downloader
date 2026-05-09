@@ -21,8 +21,8 @@ const result = document.getElementById('result');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  result.textContent = 'Scraping... please wait...';
-  result.style.color = '#333';
+  result.className = 'loading show';
+  result.textContent = '⏳ Scraping... please wait...';
 
   const formData = new FormData(form);
 
@@ -46,8 +46,8 @@ form.addEventListener('submit', async (e) => {
     console.log('Response data:', data);
 
     if (data.status === 'success') {
-      result.textContent = data.msg;
-      result.style.color = 'green';
+      result.className = 'success show';
+      result.textContent = '✅ ' + data.msg;
 
       // Build URL with form parameters to retain values after redirect
       const params = new URLSearchParams();
@@ -58,13 +58,13 @@ form.addEventListener('submit', async (e) => {
 
       setTimeout(() => location.href = '/txt-downloader/?' + params.toString(), 1500);
     } else {
-      result.textContent = 'Error: ' + data.msg;
-      result.style.color = 'red';
+      result.className = 'error show';
+      result.textContent = '❌ Error: ' + data.msg;
     }
   } catch (error) {
     console.error('Fetch error:', error);
-    result.textContent = 'Error: ' + error.message;
-    result.style.color = 'red';
+    result.className = 'error show';
+    result.textContent = '❌ Error: ' + error.message;
   }
 });
 
