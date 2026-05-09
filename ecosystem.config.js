@@ -7,8 +7,8 @@ module.exports = {
       '--bind', '127.0.0.1:9000',
       '--workers', '4',
       '--timeout', '300',
-      '--access-logfile', 'logs/access.log',
-      '--error-logfile', 'logs/gunicorn-error.log',
+      '--access-logfile', '-',
+      '--error-logfile', '-',
       '--log-level', 'info'
     ],
     interpreter: 'none',
