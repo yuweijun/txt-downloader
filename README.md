@@ -203,15 +203,56 @@ For production deployment with PM2 and Nginx, see `AGENT.md` for detailed setup 
 
 ## Logs
 
-Application logs are stored in the `logs/` directory:
+Application logs are available through PM2 or direct file access:
+
+### PM2 Logs (Recommended)
 
 ```bash
-# View real-time logs
+# Real-time logs (includes access logs + application logs + errors)
+pm2 logs txt-downloader
+
+# Last 50 lines
+pm2 logs txt-downloader --lines 50
+
+# Only errors
+pm2 logs txt-downloader --err
+
+# Clear old logs
+pm2 flush txt-downloader
+```
+
+PM2 logs include:
+- ✅ **HTTP access logs** - All requests with IP, status codes, response time
+- ✅ **Flask application logs** - Info, warnings, and debug messages
+- ✅ **Python errors** - Exceptions and stack traces
+
+Example output:
+```
+127.0.0.1 - - [09/May/2026:14:10:45 +0800] "GET /txt-downloader/ HTTP/1.1" 200 1234
+[2026-05-09 14:10:45 +08:00] INFO in app: Index page accessed
+[2026-05-09 14:10:45 +08:00] INFO in app: Found 2 downloaded files
+```
+
+### Direct File Access
+
+Application logs are stored in the `logs/` directory with monthly rotation:
+
+```bash
+# Real-time application logs
 tail -f logs/app.log
 
-# With PM2
-pm2 logs txt-downloader
+# Search for errors
+grep ERROR logs/app.log
+
+# View specific month
+cat logs/app.log.2026-05
 ```
+
+Files:
+- **`app.log`** - Current month's application logs
+- **`app.log.YYYY-MM`** - Archived monthly logs (keeps 12 months)
+- **`pm2-out.log`** - PM2 stdout capture
+- **`pm2-err.log`** - PM2 stderr capture
 
 ## Troubleshooting
 

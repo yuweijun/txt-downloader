@@ -8,8 +8,10 @@ module.exports = {
       '--workers', '4',
       '--timeout', '300',
       '--access-logfile', '-',
+      '--access-logformat', '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"',
       '--error-logfile', '-',
-      '--log-level', 'info'
+      '--log-level', 'info',
+      '--capture-output'
     ],
     interpreter: 'none',
     cwd: __dirname,
