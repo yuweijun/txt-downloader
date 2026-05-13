@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Scraper Bookmarklet</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section h2 {
+      color: #333;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #667eea;
+    }
+
+    .step {
+      background: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .step h3 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .step p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .bookmarklet-box {
+      background: #fff;
+      border: 2px dashed #667eea;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .bookmarklet-link {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white !important;
+      padding: 15px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 18px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .bookmarklet-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .instruction {
+      background: #e3f2fd;
+      border-left: 4px solid #1976d2;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      color: #1565c0;
+    }
+
+    .warning {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      color: #856404;
+    }
+
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #c62828;
+    }
+
+    .example {
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .example h4 {
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .example ul {
+      margin-left: 20px;
+      color: #666;
+    }
+
+    .example li {
+      margin: 5px 0;
+    }
+
+    ol {
+      margin-left: 20px;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    ol li {
+      margin: 10px 0;
+    }
+
+    .emoji {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+
+    .demo-gif {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📚 Web Scraper Bookmarklet</h1>
+      <p>One-click scraping from any webpage</p>
+    </div>
+
+    <div class="content">
+      <!-- Installation Section -->
+      <div class="section">
+        <h2>📥 Installation</h2>
+
+        <div class="bookmarklet-box">
+          <p style="margin-bottom: 15px; color: #666;">
+            <strong>Drag this link to your bookmarks bar:</strong>
+          </p>
+          <a href="javascript:(function(){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/yourusername/web-scraper@main/bookmarklet.min.js';document.body.appendChild(s);})();" class="bookmarklet-link">
+            🔖 Web Scraper
+          </a>
+        </div>
+
+        <div class="instruction">
+          <strong>Installation Steps:</strong>
+          <ol>
+            <li><strong>Show bookmarks bar</strong>: Press <code>Ctrl+Shift+B</code> (Windows) or <code>Cmd+Shift+B</code> (Mac)</li>
+            <li><strong>Drag the button</strong>: Click and drag the "🔖 Web Scraper" button above to your bookmarks bar</li>
+            <li><strong>Done!</strong> The bookmarklet is now installed</li>
+          </ol>
+        </div>
+
+        <div class="warning">
+          <strong>⚠️ Alternative Installation (if dragging doesn't work):</strong>
+          <ol style="margin-top: 10px;">
+            <li>Right-click on your bookmarks bar → Add new bookmark</li>
+            <li>Name: <code>Web Scraper</code></li>
+            <li>URL: Copy the code from the gray box below</li>
+          </ol>
+        </div>
+
+        <div class="example">
+          <h4>Bookmarklet Code (copy this if drag doesn't work):</h4>
+          <textarea readonly style="width: 100%; height: 100px; padding: 10px; font-family: monospace; font-size: 12px; border: 1px solid #ddd; border-radius: 4px;" onclick="this.select()">javascript:(function(){if(window.webScraperUI){alert('Scraper is already open!');return;}const overlay=document.createElement('div');overlay.id='webScraperOverlay';overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:999999;display:flex;align-items:center;justify-content:center;';const panel=document.createElement('div');panel.style.cssText='background:white;border-radius:12px;padding:30px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,0.3);';panel.innerHTML='<h2 style="margin:0 0 20px 0;color:#667eea;">🌐 Web Scraper</h2><div style="margin-bottom:15px;"><label style="display:block;margin-bottom:5px;font-weight:600;">📄 Content Selector:</label><input id="scraperContent" type="text" value="article, .content, .article, main" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:6px;"/><small style="color:#666;">CSS selector for main content</small></div><div style="margin-bottom:15px;"><label style="display:block;margin-bottom:5px;font-weight:600;">🎯 Title Selector:</label><input id="scraperTitle" type="text" value="h1, .title, .article-title" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:6px;"/><small style="color:#666;">CSS selector for page title</small></div><div style="margin-bottom:15px;"><label style="display:block;margin-bottom:5px;font-weight:600;">➡️ Next Link Selector:</label><input id="scraperNext" type="text" value="a.next, a[rel=next], a:contains(下一页), a:contains(下一章)" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:6px;"/><small style="color:#666;">Leave empty for single page</small></div><div style="margin-bottom:15px;"><label style="display:block;margin-bottom:5px;font-weight:600;">🔢 Max Pages:</label><input id="scraperMaxPages" type="number" value="10" min="1" max="100" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:6px;"/></div><div style="margin-bottom:15px;"><label style="display:block;margin-bottom:5px;font-weight:600;">💾 Filename:</label><input id="scraperFilename" type="text" placeholder="Auto from title" style="width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:6px;"/></div><div style="display:flex;gap:10px;"><button id="scraperStart" style="flex:1;padding:12px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;">🚀 Start</button><button id="scraperClose" style="padding:12px 20px;background:#f44336;color:white;border:none;border-radius:6px;font-weight:600;cursor:pointer;">✕ Close</button></div><div id="scraperStatus" style="margin-top:15px;padding:10px;border-radius:6px;display:none;"></div>';overlay.appendChild(panel);document.body.appendChild(overlay);window.webScraperUI=overlay;const findNextLink=(selectors)=>{const selectorList=selectors.split(',').map(s=>s.trim());for(const sel of selectorList){if(sel.includes(':contains(')){const text=sel.match(/:contains\(([^)]+)\)/)[1];const links=document.querySelectorAll('a');for(const link of links){if(link.textContent.includes(text))return link;}}else{const el=document.querySelector(sel);if(el)return el;}}return null;};const scrape=async()=>{const contentSel=document.getElementById('scraperContent').value;const titleSel=document.getElementById('scraperTitle').value;const nextSel=document.getElementById('scraperNext').value;const maxPages=parseInt(document.getElementById('scraperMaxPages').value);const filename=document.getElementById('scraperFilename').value;const statusDiv=document.getElementById('scraperStatus');const startBtn=document.getElementById('scraperStart');startBtn.disabled=true;startBtn.textContent='⏳ Scraping...';statusDiv.style.display='block';statusDiv.style.background='#e3f2fd';statusDiv.style.color='#1976d2';let allContent=[];let pageCount=0;const extractContent=()=>{const titleEl=document.querySelector(titleSel);const title=titleEl?titleEl.textContent.trim():'No Title';const contentEls=document.querySelectorAll(contentSel);if(!contentEls.length)return null;const content=Array.from(contentEls).map(el=>el.textContent.trim()).join('\\n\\n');return{title,content};};const processPage=()=>{pageCount++;statusDiv.textContent=`Processing page ${pageCount}/${maxPages}...`;const data=extractContent();if(data){allContent.push(`${data.title}\\n\\n${data.content}\\n\\n\\n`);return true;}return false;};processPage();if(nextSel&&pageCount<maxPages){const checkNextPage=()=>{const nextLink=findNextLink(nextSel);if(nextLink&&pageCount<maxPages){statusDiv.textContent=`Found next page, navigating... (${pageCount}/${maxPages})`;setTimeout(()=>{nextLink.click();setTimeout(()=>{if(processPage()){checkNextPage();}else{finishScraping();}},2000);},1000);}else{finishScraping();}};checkNextPage();}else{finishScraping();}function finishScraping(){if(allContent.length>0){const text=allContent.join('');const blob=new Blob([text],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(filename||allContent[0].split('\\n')[0].substring(0,50).replace(/[^a-zA-Z0-9一-龥]/g,'_')||'scraped')+'.txt';a.click();URL.revokeObjectURL(url);statusDiv.style.background='#e8f5e9';statusDiv.style.color='#388e3c';statusDiv.textContent=`✅ Success! Scraped ${pageCount} pages. Downloaded.`;}else{statusDiv.style.background='#ffebee';statusDiv.style.color='#c62828';statusDiv.textContent='❌ No content found. Check selectors.';}startBtn.disabled=false;startBtn.textContent='🚀 Start';}};document.getElementById('scraperStart').onclick=scrape;document.getElementById('scraperClose').onclick=()=>{document.body.removeChild(overlay);window.webScraperUI=null;};})();</textarea>
+        </div>
+      </div>
+
+      <!-- How to Use Section -->
+      <div class="section">
+        <h2>🚀 How to Use</h2>
+
+        <div class="step">
+          <h3><span class="emoji">1️⃣</span>Navigate to Target Page</h3>
+          <p>Go to the webpage you want to scrape (e.g., a blog article, novel chapter, documentation page)</p>
+        </div>
+
+        <div class="step">
+          <h3><span class="emoji">2️⃣</span>Click the Bookmarklet</h3>
+          <p>Click the "Web Scraper" bookmark in your bookmarks bar. A scraper panel will appear on the page.</p>
+        </div>
+
+        <div class="step">
+          <h3><span class="emoji">3️⃣</span>Configure Selectors</h3>
+          <p>The bookmarklet will show a form with smart defaults:</p>
+          <ul>
+            <li><strong>Content Selector</strong>: Where to extract text from</li>
+            <li><strong>Title Selector</strong>: How to find the page title</li>
+            <li><strong>Next Link Selector</strong>: How to find the "next page" button (optional)</li>
+            <li><strong>Max Pages</strong>: How many pages to follow</li>
+          </ul>
+        </div>
+
+        <div class="step">
+          <h3><span class="emoji">4️⃣</span>Start Scraping</h3>
+          <p>Click "🚀 Start" and watch it work! The scraper will:</p>
+          <ul>
+            <li>Extract content from the current page</li>
+            <li>Find and click the "next" link</li>
+            <li>Repeat until max pages or no more pages</li>
+            <li>Download everything as a single .txt file</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Examples Section -->
+      <div class="section">
+        <h2>💡 Common Selectors</h2>
+
+        <div class="example">
+          <h4>📰 Blog Articles / News Sites:</h4>
+          <ul>
+            <li><strong>Content:</strong> <code>article</code>, <code>.post-content</code>, <code>.entry-content</code></li>
+            <li><strong>Title:</strong> <code>h1</code>, <code>.post-title</code>, <code>.entry-title</code></li>
+            <li><strong>Next:</strong> <code>a.next</code>, <code>a[rel="next"]</code></li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>📖 Novel/Fiction Sites (Chinese):</h4>
+          <ul>
+            <li><strong>Content:</strong> <code>#content</code>, <code>.content</code>, <code>#article</code></li>
+            <li><strong>Title:</strong> <code>h1</code>, <code>.title</code></li>
+            <li><strong>Next:</strong> <code>a:contains(下一章)</code>, <code>a:contains(下一页)</code></li>
+          </ul>
+        </div>
+
+        <div class="example">
+          <h4>📚 Documentation Sites:</h4>
+          <ul>
+            <li><strong>Content:</strong> <code>main</code>, <code>.markdown-body</code>, <code>.doc-content</code></li>
+            <li><strong>Title:</strong> <code>h1</code></li>
+            <li><strong>Next:</strong> <code>a.next-page</code>, <code>a[aria-label="Next"]</code></li>
+          </ul>
+        </div>
+
+        <div class="instruction">
+          <strong>💡 Pro Tips:</strong>
+          <ul style="margin-top: 10px; margin-left: 20px;">
+            <li><strong>Inspect Element:</strong> Right-click → Inspect to find CSS selectors</li>
+            <li><strong>Multiple Selectors:</strong> Use commas: <code>article, .content, main</code></li>
+            <li><strong>Test First:</strong> Try with max pages = 1 to test selectors</li>
+            <li><strong>Single Page:</strong> Leave "Next Link" empty to scrape just current page</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="section">
+        <h2>✨ Features</h2>
+
+        <div class="example">
+          <ul>
+            <li>✅ <strong>No CORS issues</strong> - runs directly on the target page</li>
+            <li>✅ <strong>Smart pagination</strong> - automatically follows next page links</li>
+            <li>✅ <strong>Flexible selectors</strong> - supports any CSS selector</li>
+            <li>✅ <strong>Auto-filename</strong> - generates filename from page title</li>
+            <li>✅ <strong>Progress tracking</strong> - shows which page is being processed</li>
+            <li>✅ <strong>Safe limits</strong> - prevents infinite loops with max pages</li>
+            <li>✅ <strong>Works offline</strong> - no external dependencies after installation</li>
+            <li>✅ <strong>Privacy-focused</strong> - all processing happens in your browser</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Troubleshooting Section -->
+      <div class="section">
+        <h2>🔧 Troubleshooting</h2>
+
+        <div class="warning">
+          <strong>Issue: Nothing happens when I click the bookmarklet</strong>
+          <ul style="margin-top: 10px; margin-left: 20px;">
+            <li>Make sure you clicked the bookmark, not just viewed it</li>
+            <li>Try opening the browser console (F12) to see any errors</li>
+            <li>Some sites block JavaScript - try a different browser</li>
+          </ul>
+        </div>
+
+        <div class="warning">
+          <strong>Issue: No content extracted</strong>
+          <ul style="margin-top: 10px; margin-left: 20px;">
+            <li>Right-click on the content → Inspect to find the correct selector</li>
+            <li>Try broader selectors like <code>main</code> or <code>article</code></li>
+            <li>Use browser console: <code>document.querySelectorAll('YOUR_SELECTOR')</code></li>
+          </ul>
+        </div>
+
+        <div class="warning">
+          <strong>Issue: Next page not working</strong>
+          <ul style="margin-top: 10px; margin-left: 20px;">
+            <li>Inspect the "next" button to find its selector</li>
+            <li>For Chinese sites, try: <code>a:contains(下一页)</code></li>
+            <li>For English sites, try: <code>a.next</code> or <code>a[rel="next"]</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Advanced Section -->
+      <div class="section">
+        <h2>🔬 Advanced Tips</h2>
+
+        <div class="example">
+          <h4>Finding the Right Selectors:</h4>
+          <ol>
+            <li>Right-click on the content you want → "Inspect Element"</li>
+            <li>Look at the HTML element's <code>class</code> or <code>id</code></li>
+            <li>Use <code>#id</code> for IDs (e.g., <code>#content</code>)</li>
+            <li>Use <code>.class</code> for classes (e.g., <code>.article-body</code>)</li>
+            <li>Use element names directly (e.g., <code>article</code>, <code>main</code>)</li>
+          </ol>
+        </div>
+
+        <div class="example">
+          <h4>Testing Selectors in Console:</h4>
+          <ol>
+            <li>Press <code>F12</code> to open Developer Console</li>
+            <li>Type: <code>document.querySelector('YOUR_SELECTOR')</code></li>
+            <li>If it returns an element, your selector is correct!</li>
+            <li>Use <code>querySelectorAll</code> to see all matches</li>
+          </ol>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

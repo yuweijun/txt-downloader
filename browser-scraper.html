@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser-Based Web Scraper</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 16px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 5px;
+      color: #666;
+      font-size: 12px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status.show {
+      display: block;
+    }
+
+    .status.info {
+      background: #e3f2fd;
+      color: #1976d2;
+      border-left: 4px solid #1976d2;
+    }
+
+    .status.success {
+      background: #e8f5e9;
+      color: #388e3c;
+      border-left: 4px solid #388e3c;
+    }
+
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #c62828;
+    }
+
+    .progress {
+      margin-top: 15px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s;
+      width: 0%;
+    }
+
+    .log-container {
+      margin-top: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #f5f5f5;
+      border-radius: 8px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    .log-entry {
+      margin: 5px 0;
+      padding: 5px;
+      border-left: 3px solid #667eea;
+      padding-left: 10px;
+    }
+
+    .cors-warning {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #856404;
+    }
+
+    .cors-warning strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .cors-warning code {
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌐 Browser-Based Web Scraper</h1>
+      <p>Client-side content extraction with pagination support</p>
+    </div>
+
+    <div class="content">
+      <div class="cors-warning">
+        <strong>⚠️ CORS Limitation Notice</strong>
+        <p>Due to browser security (CORS), this tool can only scrape:</p>
+        <ul style="margin: 10px 0 10px 20px;">
+          <li>Pages from the same domain as this file</li>
+          <li>Pages that explicitly allow cross-origin requests</li>
+          <li>Pages accessed through a CORS proxy (e.g., <code>https://cors-anywhere.herokuapp.com/</code>)</li>
+        </ul>
+        <p style="margin-top: 10px;">For most websites, you may need to use a browser extension like "CORS Unblock" or run this as a bookmarklet directly on the target site.</p>
+      </div>
+
+      <form id="scrapeForm">
+        <div class="form-group">
+          <label for="url">🔗 Target URL</label>
+          <input type="url" id="url" name="url" placeholder="https://example.com/article" required>
+          <small>The starting page to scrape</small>
+        </div>
+
+        <div class="form-group">
+          <label for="corsProxy">🔄 CORS Proxy (optional)</label>
+          <input type="text" id="corsProxy" name="corsProxy" placeholder="https://cors-anywhere.herokuapp.com/">
+          <small>Leave empty if target site allows CORS or you're using a browser extension</small>
+        </div>
+
+        <div class="form-group">
+          <label for="titleSelector">🎯 Title Selector</label>
+          <input type="text" id="titleSelector" name="titleSelector" placeholder="h1, .title, #title" value="h1">
+          <small>CSS selector for page title (e.g., "h1", ".article-title")</small>
+        </div>
+
+        <div class="form-group">
+          <label for="contentSelector">📄 Content Selector</label>
+          <input type="text" id="contentSelector" name="contentSelector" placeholder="article, .content, #content" value="article">
+          <small>CSS selector for main content (e.g., "article", ".post-content")</small>
+        </div>
+
+        <div class="form-group">
+          <label for="nextPageSelector">➡️ Next Page Link Selector (optional)</label>
+          <input type="text" id="nextPageSelector" name="nextPageSelector" placeholder="a.next, a[rel='next']">
+          <small>CSS selector for "next page" link, or leave empty to scrape single page</small>
+        </div>
+
+        <div class="form-group">
+          <label for="maxPages">🔢 Max Pages</label>
+          <input type="number" id="maxPages" name="maxPages" value="10" min="1" max="1000">
+          <small>Maximum number of pages to scrape (1-1000)</small>
+        </div>
+
+        <div class="form-group">
+          <label for="filename">💾 Output Filename</label>
+          <input type="text" id="filename" name="filename" placeholder="scraped-content" value="scraped-content">
+          <small>File will be saved as .txt</small>
+        </div>
+
+        <button type="submit" class="submit-btn">🚀 Start Scraping</button>
+      </form>
+
+      <div id="status" class="status">
+        <div id="statusText"></div>
+        <div class="progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div id="progressText" style="margin-top: 5px; font-size: 12px;"></div>
+        </div>
+        <div id="logContainer" class="log-container" style="display: none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('scrapeForm');
+    const statusDiv = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const logContainer = document.getElementById('logContainer');
+
+    let logs = [];
+
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = `[${timestamp}] ${message}`;
+      logs.push(logEntry);
+
+      const logElement = document.createElement('div');
+      logElement.className = 'log-entry';
+      logElement.textContent = logEntry;
+      logContainer.appendChild(logElement);
+      logContainer.scrollTop = logContainer.scrollHeight;
+
+      console.log(logEntry);
+    }
+
+    function updateStatus(message, type = 'info') {
+      statusDiv.className = `status show ${type}`;
+      statusText.textContent = message;
+      logContainer.style.display = 'block';
+      log(message, type);
+    }
+
+    function updateProgress(current, total) {
+      const percent = (current / total) * 100;
+      progressFill.style.width = `${percent}%`;
+      progressText.textContent = `Page ${current} of ${total}`;
+    }
+
+    async function fetchPage(url, corsProxy = '') {
+      const fetchUrl = corsProxy ? corsProxy + url : url;
+      log(`Fetching: ${url}`);
+
+      const response = await fetch(fetchUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const html = await response.text();
+      const parser = new DOMParser();
+      return parser.parseFromString(html, 'text/html');
+    }
+
+    function extractTitle(doc, selector) {
+      const element = doc.querySelector(selector);
+      if (!element) {
+        log(`Warning: No element found for title selector "${selector}"`, 'warning');
+        return 'No Title';
+      }
+      return element.textContent.trim();
+    }
+
+    function extractContent(doc, selector) {
+      const elements = doc.querySelectorAll(selector);
+      if (!elements.length) {
+        log(`Warning: No elements found for content selector "${selector}"`, 'warning');
+        return '';
+      }
+
+      const contentParts = Array.from(elements).map(el => {
+        return el.textContent.trim();
+      });
+
+      return contentParts.join('\n\n');
+    }
+
+    function findNextPageUrl(doc, selector, baseUrl) {
+      if (!selector) return null;
+
+      const nextLink = doc.querySelector(selector);
+      if (!nextLink) {
+        log('No next page link found');
+        return null;
+      }
+
+      const href = nextLink.getAttribute('href');
+      if (!href || href.toLowerCase().startsWith('javascript:')) {
+        log('Invalid next page link');
+        return null;
+      }
+
+      // Convert relative URL to absolute
+      const url = new URL(href, baseUrl);
+      log(`Found next page: ${url.href}`);
+      return url.href;
+    }
+
+    function sanitizeFilename(filename) {
+      return filename.replace(/[<>:"/\\|?*\x00-\x1f]/g, '').replace(/\s+/g, '_');
+    }
+
+    function downloadAsFile(content, filename) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = sanitizeFilename(filename) + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      log(`Downloaded: ${a.download}`);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.textContent;
+
+      // Get form values
+      const startUrl = document.getElementById('url').value;
+      const corsProxy = document.getElementById('corsProxy').value;
+      const titleSelector = document.getElementById('titleSelector').value;
+      const contentSelector = document.getElementById('contentSelector').value;
+      const nextPageSelector = document.getElementById('nextPageSelector').value;
+      const maxPages = parseInt(document.getElementById('maxPages').value);
+      const filename = document.getElementById('filename').value;
+
+      // Disable form
+      submitBtn.disabled = true;
+      submitBtn.textContent = '⏳ Scraping...';
+
+      // Clear logs
+      logs = [];
+      logContainer.innerHTML = '';
+
+      // Start scraping
+      updateStatus('🚀 Starting scraper...', 'info');
+
+      let allContent = [];
+      let currentUrl = startUrl;
+      let pageCount = 0;
+      let visitedUrls = new Set();
+
+      try {
+        while (currentUrl && pageCount < maxPages) {
+          // Check for infinite loops
+          if (visitedUrls.has(currentUrl)) {
+            log(`Already visited ${currentUrl}, stopping to avoid loop`, 'warning');
+            break;
+          }
+
+          visitedUrls.add(currentUrl);
+          pageCount++;
+          updateProgress(pageCount, maxPages);
+
+          log(`--- Processing page ${pageCount}/${maxPages} ---`);
+
+          // Fetch and parse page
+          const doc = await fetchPage(currentUrl, corsProxy);
+
+          // Extract content
+          const title = extractTitle(doc, titleSelector);
+          const content = extractContent(doc, contentSelector);
+
+          if (content) {
+            allContent.push(`${title}\n\n${content}\n\n\n`);
+            log(`✓ Extracted: ${title} (${content.length} chars)`);
+          } else {
+            log(`✗ No content found on page ${pageCount}`, 'warning');
+          }
+
+          // Find next page
+          if (nextPageSelector && pageCount < maxPages) {
+            currentUrl = findNextPageUrl(doc, nextPageSelector, currentUrl);
+            if (!currentUrl) {
+              log('No more pages found, finishing...');
+              break;
+            }
+          } else {
+            break;
+          }
+
+          // Small delay to avoid overwhelming the server
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        // Save content
+        if (allContent.length > 0) {
+          const finalContent = allContent.join('');
+          downloadAsFile(finalContent, filename);
+          updateStatus(`✅ Success! Scraped ${pageCount} pages. File downloaded.`, 'success');
+        } else {
+          updateStatus('⚠️ No content extracted. Check your selectors.', 'error');
+        }
+
+      } catch (error) {
+        console.error('Scraping error:', error);
+        updateStatus(`❌ Error: ${error.message}`, 'error');
+        log(`Error details: ${error.stack}`, 'error');
+      } finally {
+        // Re-enable form
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+      }
+    });
+  </script>
+</body>
+</html>
