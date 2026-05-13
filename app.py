@@ -107,6 +107,10 @@ def index():
 
   return render_template('index.html', files=files, form=form_values)
 
+@app.route('/txt-downloader/<path:filename>')
+def root_files(filename):
+  return send_from_directory('.', filename)
+
 @app.route('/txt-downloader/static/<path:filename>')
 def static_files(filename):
   return send_from_directory('static', filename)
